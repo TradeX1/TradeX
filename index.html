@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Trade X Global</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <style>
+    body {
+      margin:0;
+      font-family: Arial;
+      background:#0f172a;
+      color:white;
+    }
+
+    .container {
+      padding:20px;
+      text-align:center;
+    }
+
+    input, button {
+      width:90%;
+      padding:12px;
+      margin:10px;
+      border:none;
+      border-radius:8px;
+    }
+
+    button {
+      background:#22c55e;
+      color:white;
+      font-weight:bold;
+    }
+
+    .card {
+      background:#1e293b;
+      padding:20px;
+      border-radius:12px;
+      margin:15px;
+    }
+
+    .hidden {
+      display:none;
+    }
+
+    h1 { color:#22c55e; }
+
+  </style>
+</head>
+
+<body>
+
+<div class="container" id="login">
+  <h1>Trade X Global</h1>
+  <h3>Login / Signup</h3>
+  <input id="username" placeholder="Enter username">
+  <button onclick="enter()">Enter</button>
+</div>
+
+<div class="container hidden" id="dashboard">
+  <h1>Dashboard</h1>
+
+  <div class="card">
+    <h3>Balance</h3>
+    <h2>$<span id="balance">100</span></h2>
+  </div>
+
+  <button onclick="openTasks()">Go to Tasks</button>
+</div>
+
+<div class="container hidden" id="tasks">
+  <h1>Tasks</h1>
+
+  <div class="card">
+    <p>Task 1: Watch Ad → Earn $5</p>
+    <button onclick="earn(5)">Complete</button>
+  </div>
+
+  <div class="card">
+    <p>Task 2: Click Link → Earn $10</p>
+    <button onclick="earn(10)">Complete</button>
+  </div>
+
+  <div class="card">
+    <p>Task 3: Daily Bonus → Earn $20</p>
+    <button onclick="earn(20)">Complete</button>
+  </div>
+
+  <button onclick="back()">Back</button>
+</div>
+
+<script>
+let balance = 100;
+
+function enter(){
+  document.getElementById("login").classList.add("hidden");
+  document.getElementById("dashboard").classList.remove("hidden");
+}
+
+function openTasks(){
+  document.getElementById("dashboard").classList.add("hidden");
+  document.getElementById("tasks").classList.remove("hidden");
+}
+
+function back(){
+  document.getElementById("tasks").classList.add("hidden");
+  document.getElementById("dashboard").classList.remove("hidden");
+}
+
+function earn(amount){
+  balance += amount;
+  document.getElementById("balance").innerText = balance;
+  alert("Earned $" + amount);
+}
+</script>
+
+</body>
+</html>
