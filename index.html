@@ -117,12 +117,11 @@ button{
 
   <!-- ADMIN PANEL -->
   <div id="adminPanel" style="display:none">
-    <div class="card">
-      <h3>Admin Panel</h3>
-      <button onclick="add()">Increase Balance</button>
-      <button onclick="minus()">Decrease Balance</button>
-    </div>
+  <div class="card">
+    <h3>👑 Admin Panel</h3>
+    <div id="usersList"></div>
   </div>
+</div>
 
   <button onclick="logout()">Logout</button>
 
@@ -174,8 +173,9 @@ function show(){
 
   // ADMIN CHECK
   if(email == adminEmail){
-    adminPanel.style.display="block";
-  }
+  adminPanel.style.display="block";
+  loadUsers();
+}
 }
 
 // INCREASE BALANCE
@@ -205,7 +205,37 @@ function logout(){
   localStorage.removeItem("current");
   location.reload();
 }
+function loadUsers(){
+  let html = "";
 
+  for(let i=0; i<localStorage.length; i++){
+    let key = localStorage.key(i);
+
+    if(key == "current") continue;
+
+    let data = JSON.parse(localStorage.getItem(key));
+
+    html += `
+      <div style="background:#222; padding:10px; margin:10px; border-radius:8px;">
+        <b>${data.user}</b> (${data.email}) <br>
+        Balance: $${data.balance} <br><br>
+
+        <button onclick="updateBal('${data.email}', 100)">+100</button>
+        <button onclick="updateBal('${data.email}', -100)">-100</button>
+      </div>
+    `;
+  }
+
+  usersList.innerHTML = html;}function updateBal(email, amount){
+  let data = JSON.parse(localStorage.getItem(email));
+
+  data.balance += amount;
+
+  localStorage.setItem(email, JSON.stringify(data));
+
+  loadUsers();
+}
+                       }
 // AUTO LOGIN
 if(localStorage.getItem("current")){
   show();
