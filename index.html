@@ -124,7 +124,17 @@ button{
 
     <button onclick="openDeposit()">➕ Add Funds</button>
   </div>
+<div id="walletBox" style="display:none; background:#111; padding:15px; border-radius:10px; margin-top:10px;">
+  <h3>Deposit USDT (TRC20)</h3>
+  
+  <p><b>Wallet Address:</b></p>
+  <p id="walletAddress">TXYZ123456789ABCDEF</p>
 
+  <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=TXYZ123456789ABCDEF">
+
+  <br><br>
+  <button onclick="closeWallet()">Close</button>
+</div>
   <div class="card">
     <h3>Market</h3>
     <button onclick="selectCoin('BTCUSDT')">BTC</button>
@@ -142,7 +152,7 @@ button{
   <div class="card">
     <h3>Trade</h3>
     <input id="amount" placeholder="Enter Amount">
-    <button onclick="buy()">Buy</button>
+    <button onclick="openDeposit()">Buy</button>
     <button onclick="sell()">Sell</button>
   </div>
 
@@ -249,7 +259,13 @@ function minus(){
 
   show();
 }
+function openDeposit(){
+  document.getElementById("walletBox").style.display = "block";
+}
 
+function closeWallet(){
+  document.getElementById("walletBox").style.display = "none";
+}
 // LOGOUT
 function logout(){
   localStorage.removeItem("current");
