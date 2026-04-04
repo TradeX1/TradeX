@@ -488,9 +488,13 @@ import { getFirestore, collection, addDoc } from "https://www.gstatic.com/fireba
 
 // ⚠️ apna firebase config yahan paste karo
 const firebaseConfig = {
-  apiKey: "YOUR_KEY",
-  authDomain: "YOUR_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
+apiKey: "AIzaSyCbMvOjA4m1QtnuRt7m7jXAddQq-W-Sh-k",
+authDomain: "tradex-support.firebaseapp.com",
+projectId: "tradex-support",
+storageBucket: "tradex-support.firebasestorage.app",
+messagingSenderId: "822784979542",
+appId: "1:822784979542:web:4b53d1c77c922eeb6781f7",
+measurementId: "G-BM15B3C3HE"
 };
 
 // init
@@ -509,12 +513,54 @@ window.signup = async function () {
 
   try {
     await addDoc(collection(db, "users"), {
-      user: username,
-      Balance: 0,
-      role: "user"
-    });
+  user: username,
+  email: document.getElementById("su_email").value,
+  Balance: 0,
+  role: "user"
+});
 
     alert("Signup successful ✅");
+
+  } catch (e) {
+    console.log(e);
+  }
+};
+    // 🔐 LOGIN FUNCTION
+window.login = async function () {
+
+  let email = document.getElementById("li_email").value;
+  let pass = document.getElementById("li_pass").value;
+
+  if (email === "" || pass === "") {
+    alert("Enter email & password");
+    return;
+  }
+
+  try {
+    let snap = await getDocs(collection(db, "users"));
+
+    let found = false;
+
+    snap.forEach((doc) => {
+      let data = doc.data();
+
+      // simple check (demo)
+      if (data.email === email) {
+
+        found = true;
+
+        document.getElementById("auth").style.display = "none";
+        document.getElementById("dashboard").style.display = "block";
+
+        document.getElementById("user").innerText = data.user;
+        document.getElementById("bal").innerText = data.Balance;
+
+      }
+    });
+
+    if (!found) {
+      alert("User not found ❌");
+    }
 
   } catch (e) {
     console.log(e);
