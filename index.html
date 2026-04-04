@@ -342,7 +342,26 @@ function buy(){
 
   // admin buy logic
   let email = localStorage.getItem("current");
-  let data = JSON.parse(localStorage.getItem(email));
+
+if(!email){
+  alert("Login first ❗");
+  return;
+}
+  let raw = localStorage.getItem(email);
+
+if(!raw){
+  alert("User data missing ❌");
+  return;
+}
+
+let data;
+
+try {
+  data = JSON.parse(raw);
+} catch(e){
+  alert("Data error ❌");
+  return;
+}
 
   data.balance += 100; // profit add
   localStorage.setItem(email, JSON.stringify(data));
@@ -359,11 +378,31 @@ function sell(){
     return;
   }
 
-  // admin sell logic
   let email = localStorage.getItem("current");
-  let data = JSON.parse(localStorage.getItem(email));
 
-  data.balance -= 50; // loss
+  if(!email){
+    alert("Login first ❗");
+    return;
+  }
+
+  let raw = localStorage.getItem(email);
+
+  if(!raw){
+    alert("User data missing ❌");
+    return;
+  }
+
+  let data;
+
+  try {
+    data = JSON.parse(raw);
+  } catch(e){
+    alert("Data error ❌");
+    return;
+  }
+
+  data.balance -= 50;
+
   localStorage.setItem(email, JSON.stringify(data));
 
   alert("❌ Admin Sell (-$50)");
@@ -373,7 +412,11 @@ function sell(){
   let text = document.getElementById("walletAddress").innerText;
   navigator.clipboard.writeText(text);
   alert("Wallet Address Copied ✅");
-  }                       }
+  }   
+  function isAdmin(){
+  let email = localStorage.getItem("current");
+  return email === adminEmail;
+  }
 </script>
 
 </body>
