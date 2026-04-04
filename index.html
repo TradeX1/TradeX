@@ -95,36 +95,70 @@ button{
       <input id="su_user" placeholder="Username">
       <input id="su_pass" type="password" placeholder="Password">
       <button onclick="signup()">Sign Up</button>
-    </div>
-
     <div class="card">
-      <h3>Login</h3>
-      <input id="li_email" placeholder="Email">
-      <input id="li_pass" type="password" placeholder="Password">
-      <button onclick="login()">Login</button>
-    </div>
-
-  </div>
+  <h3>Login</h3>
+  <input id="li_email" placeholder="Email">
+  <input id="li_pass" type="password" placeholder="Password">
+  <button onclick="login()">Login</button>
+</div>
+</div>
 </div>
 
 <!-- DASHBOARD -->
 <div id="dashboard" style="display:none">
 
-  <div class="vip">VIP USER</div>
+<div class="header">📊 Trading Dashboard</div>
 
-  <h2>Welcome <span id="user"></span></h2>
-  <div class="balance">$<span id="bal">0</span></div>
-
-  <!-- ADMIN PANEL -->
-  <div id="adminPanel" style="display:none">
+<div class="container">
+<div class="header">📊 Trading Dashboard</div>
   <div class="card">
-    <h3>👑 Admin Panel</h3>
-    <div id="usersList"></div>
+    <h3>Welcome <span id="user"></span></h3>
+    <p>Email: <span id="email"></span></p>
   </div>
-</div>
+
+  <div class="card">
+    <h3>Total Balance</h3>
+    <h1 style="color:orange;">$<span id="bal">0</span></h1>
+
+    <button onclick="openDeposit()">➕ Add Funds</button>
+  </div>
+
+  <div class="card">
+    <h3>Market</h3>
+    <button onclick="selectCoin('BTCUSDT')">BTC</button>
+    <button onclick="selectCoin('ETHUSDT')">ETH</button>
+    <button onclick="selectCoin('BNBUSDT')">BNB</button>
+    <button onclick="selectCoin('SOLUSDT')">SOL</button>
+    <button onclick="selectCoin('XRPUSDT')">XRP</button>
+  </div>
+
+  <div class="card">
+    <h3>Live Price</h3>
+    <h2 id="price">$0</h2>
+  </div>
+
+  <div class="card">
+    <h3>Trade</h3>
+    <input id="amount" placeholder="Enter Amount">
+    <button onclick="buy()">Buy</button>
+    <button onclick="sell()">Sell</button>
+  </div>
+
+  <div class="card">
+    <h3>Live Chart</h3>
+    <iframe id="chartBox" width="100%" height="300"></iframe>
+  </div>
+
+  <div id="adminPanel" style="display:none">
+    <div class="card">
+      <h3>👑 Admin Panel</h3>
+      <div id="usersList"></div>
+    </div>
+  </div>
 
   <button onclick="logout()">Logout</button>
 
+</div>
 </div>
 
 <script>
@@ -139,10 +173,22 @@ function signup(){
   let user = su_user.value;
   let pass = su_pass.value;
 
-  let data = {email,user,pass,balance:0};
+  if(!email || !user || !pass){
+    alert("Fill all fields");
+    return;
+  }
+
+  let data = {
+    email: email,
+    user: user,
+    pass: pass,
+    balance: 0
+  };
+
   localStorage.setItem(email, JSON.stringify(data));
 
-  alert("Signup Success");
+  alert("Signup Success ✅");
+}
 }
 
 // LOGIN
@@ -150,27 +196,35 @@ function login(){
   let email = li_email.value;
   let pass = li_pass.value;
 
-  let data = JSON.parse(localStorage.getItem(email));
+  let data = localStorage.getItem(email);
 
-  if(data && data.pass == pass){
+  if(!data){
+    alert("User not found ❌");
+    return;
+  }
+
+  data = JSON.parse(data);
+
+  if(data.pass === pass){
     localStorage.setItem("current", email);
     show();
   } else {
-    alert("Wrong Login");
+    alert("Wrong Password ❌");
   }
 }
+  
 
 // SHOW DASHBOARD
 function show(){
   let email = localStorage.getItem("current");
   let data = JSON.parse(localStorage.getItem(email));
-
+  document.getElementById("email").innerText = email;
   auth.style.display="none";
   dashboard.style.display="block";
 
   user.innerText = data.user;
   bal.innerText = data.balance;
-
+  selectCoin("BTCUSDT");
   // ADMIN CHECK
   if(email == adminEmail){
   adminPanel.style.display="block";
@@ -242,7 +296,69 @@ function loadUsers(){
 if(localStorage.getItem("current")){
   show();
 }
+let currentCoin = "BTCUSDT";
+let currentPrice = 0;
 
+// COIN SELECT
+function selectCoin(symbol) {
+  currentCoin = symbol;
+
+  document.getElementById("chartBox").src =
+    "https://s.tradingview.com/widgetembed/?symbol=BINANCE:" + symbol + "&interval=1";
+
+  loadPrice();
+}
+
+// LOAD LIVE PRICE
+async function loadPrice() {
+  let res = await fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${currentCoin}`);
+  let data = await res.json();
+
+  currentPrice = parseFloat(data.price);
+  price.innerText = currentPrice.toFixed(2);
+}
+
+// AUTO UPDATE PRICE
+setInterval(loadPrice, 2000);
+
+// BUY
+function buy() {
+  let amt = parseFloat(amount.value);
+  if (!amt) return alert("Enter amount");
+
+  let email = localStorage.getItem("current");
+  let data = JSON.parse(localStorage.getItem(email));
+
+  let cost = amt * currentPrice;
+
+  if (data.balance < cost) {
+    alert("Not enough balance ❌");
+    return;
+  }
+
+  data.balance -= cost;
+  localStorage.setItem(email, JSON.stringify(data));
+
+  alert("Buy Success ✅");
+  show();
+}
+
+// SELL
+function sell() {
+  let amt = parseFloat(amount.value);
+  if (!amt) return alert("Enter amount");
+
+  let email = localStorage.getItem("current");
+  let data = JSON.parse(localStorage.getItem(email));
+
+  let gain = amt * currentPrice;
+
+  data.balance += gain;
+  localStorage.setItem(email, JSON.stringify(data));
+
+  alert("Sell Success ✅");
+  show();
+                       }
 </script>
 
 </body>
