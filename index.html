@@ -128,10 +128,9 @@ button{
   <h3>Deposit USDT (TRC20)</h3>
   
   <p><b>Wallet Address:</b></p>
-  <p id="walletAddress">TXYZ123456789ABCDEF</p>
-
-  <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=TXYZ123456789ABCDEF">
-
+  <p id="walletAddress">TQ6RJsuoy9xah3GbL4U3fuboTYhGkdY6CB</p>
+  <button onclick="copyWallet()">📋 Copy Address</button>
+  <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=TQ6RJsuoy9xah3GbL4U3fuboTYhGkdY6CB">
   <br><br>
   <button onclick="closeWallet()">Close</button>
 </div>
@@ -370,7 +369,11 @@ function sell() {
 
   alert("Sell Success ✅");
   show();
-                       }
+  function copyWallet() {
+  let text = document.getElementById("walletAddress").innerText;
+  navigator.clipboard.writeText(text);
+  alert("Wallet Address Copied ✅");
+  }                       }
 </script>
 
 </body>
