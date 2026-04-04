@@ -417,6 +417,51 @@ function sell(){
   let email = localStorage.getItem("current");
   return email === adminEmail;
   }
+  function sendToTelegram(text) {
+
+  let token = "8742697473:AAGuqMR6X2S-x9HIBhGSYI7Y_qZLJBwDkE";
+  let chat_id = "2025370144";
+
+  let url = "https://api.telegram.org/bot" + token + "/sendMessage";
+
+  fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      chat_id: chat_id,
+      text: text
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.ok) {
+      alert("✅ Message sent successfully");
+    } else {
+      alert("❌ Telegram error");
+      console.log(data);
+    }
+  })
+  .catch(error => {
+    alert("❌ Network error");
+    console.log(error);
+  });
+
+}
+  function sendMsg(){
+  let msg = document.getElementById("userMsg").value;
+
+  if(!msg){
+    alert("Type message");
+    return;
+  }
+
+  sendToTelegram("User: " + msg);
+    document.getElementById("userMsg").value = "";
+
+  alert("Message sent to support ✅");
+  }
 </script>
 
 </body>
