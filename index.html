@@ -1,178 +1,124 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Trade X Global</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <style>
-    body { margin:0; font-family:Arial; background:#0b0f1a; color:white; }
-
-    .screen { display:none; padding:20px; }
-    .active { display:block; }
-
-    h1 { color:#00ff88; }
-
-    input, button {
-      width:90%; padding:12px; margin:10px;
-      border:none; border-radius:10px;
-    }
-
-    button { background:#00ff88; font-weight:bold; }
-
-    .card {
-      background:#111827;
-      padding:15px;
-      border-radius:12px;
-      margin:10px 0;
-    }
-
-    .locked {
-      opacity:0.5;
-    }
-
-    .nav {
-      position:fixed;
-      bottom:0;
-      width:100%;
-      display:flex;
-      background:#111;
-    }
-
-    .nav button {
-      flex:1;
-      background:none;
-      color:white;
-    }
-  </style>
+<title>Trading Exchange</title>
+<style>
+body{
+  font-family: Arial;
+  background:black;
+  color:white;
+  text-align:center;
+}
+input,button{
+  padding:10px;
+  margin:5px;
+  width:80%;
+}
+button{
+  background:orange;
+  border:none;
+  color:white;
+}
+</style>
 </head>
 
 <body>
 
-<!-- LOGIN / SIGNUP -->
-<div id="login" class="screen active">
-  <h1>Trade X Global</h1>
-  <h3>Sign Up / Login</h3>
-  <input id="user" placeholder="Username">
-  <input type="password" placeholder="Password">
-  <button onclick="enter()">Continue</button>
+<h2>Trading Exchange</h2>
+
+<div id="auth">
+  <h3>Signup</h3>
+  <input id="su_email" placeholder="Email"><br>
+  <input id="su_user" placeholder="Username"><br>
+  <input id="su_pass" type="password" placeholder="Password"><br>
+  <button onclick="signup()">Sign Up</button>
+
+  <h3>Login</h3>
+  <input id="li_email" placeholder="Email"><br>
+  <input id="li_pass" type="password" placeholder="Password"><br>
+  <button onclick="login()">Login</button>
 </div>
 
-<!-- HOME -->
-<div id="home" class="screen">
-  <h1>Dashboard</h1>
+<div id="dashboard" style="display:none">
+  <h3>Welcome <span id="user"></span></h3>
+  <h2>Balance: $<span id="bal">0</span></h2>
 
-  <div class="card">
-    <p>Balance</p>
-    <h2>$<span id="balance">0</span></h2>
+  <div id="adminPanel" style="display:none">
+    <h3>Admin Panel</h3>
+    <button onclick="add()">Increase Balance</button>
+    <button onclick="minus()">Decrease Balance</button>
   </div>
 
-  <div class="card">
-    <p>Complete tasks to unlock higher earnings</p>
-  </div>
-</div>
-
-<!-- TASKS -->
-<div id="tasks" class="screen">
-  <h1>Tasks</h1>
-
-  <div class="card">
-    <p>Task 1 → Earn $5</p>
-    <button onclick="completeTask(1,5)">Complete</button>
-  </div>
-
-  <div class="card locked" id="t2">
-    <p>Task 2 → Earn $15 (Locked)</p>
-    <button onclick="locked()">Locked</button>
-  </div>
-
-  <div class="card locked" id="t3">
-    <p>Task 3 → Earn $30 (Locked)</p>
-    <button onclick="locked()">Locked</button>
-  </div>
-</div>
-
-<!-- PROFILE -->
-<div id="profile" class="screen">
-  <h1>Profile</h1>
-  <div class="card">
-    <p id="usernameText"></p>
-  </div>
   <button onclick="logout()">Logout</button>
 </div>
 
-<!-- NAV -->
-<div class="nav">
-  <button onclick="show('home')">Home</button>
-  <button onclick="show('tasks')">Tasks</button>
-  <button onclick="show('profile')">Profile</button>
-</div>
-
 <script>
-let balance = parseInt(localStorage.getItem("balance")) || 0;
-let done1 = localStorage.getItem("done1") || false;
 
-document.getElementById("balance").innerText = balance;
+let adminEmail = "goharg626@gmail.com";
+let adminUser = "goharjaan";
+let adminPass = "Pakistanh786";
 
-function enter(){
-  let u = document.getElementById("user").value;
-  localStorage.setItem("user", u);
-  document.getElementById("usernameText").innerText = "User: " + u;
+function signup(){
+  let email = su_email.value;
+  let user = su_user.value;
+  let pass = su_pass.value;
 
-  document.getElementById("login").classList.remove("active");
-  show('home');
+  let data = {email,user,pass,balance:0};
+  localStorage.setItem(email, JSON.stringify(data));
 
-  if(done1){
-    unlock();
+  alert("Signup Success");
+}
+
+function login(){
+  let email = li_email.value;
+  let pass = li_pass.value;
+
+  let data = JSON.parse(localStorage.getItem(email));
+
+  if(data && data.pass == pass){
+    localStorage.setItem("current", email);
+    show();
+  }else{
+    alert("Wrong Login");
   }
 }
 
-function show(page){
-  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
-  document.getElementById(page).classList.add("active");
-}
+function show(){
+  let email = localStorage.getItem("current");
+  let data = JSON.parse(localStorage.getItem(email));
 
-function completeTask(num, amount){
-  if(num === 1){
-    balance += amount;
-    localStorage.setItem("done1", true);
-    localStorage.setItem("balance", balance);
-    document.getElementById("balance").innerText = balance;
-    unlock();
-    alert("Task 1 Completed +$5");
+  auth.style.display="none";
+  dashboard.style.display="block";
+
+  user.innerText = data.user;
+  bal.innerText = data.balance;
+
+  if(email==adminEmail && data.user==adminUser && data.pass==adminPass){
+    adminPanel.style.display="block";
   }
 }
 
-function unlock(){
-  document.getElementById("t2").classList.remove("locked");
-  document.getElementById("t2").innerHTML = `
-    <p>Task 2 → Earn $15</p>
-    <button onclick="earn(15,2)">Complete</button>
-  `;
+function add(){
+  let email = localStorage.getItem("current");
+  let data = JSON.parse(localStorage.getItem(email));
+  data.balance += 100;
+  localStorage.setItem(email, JSON.stringify(data));
+  show();
 }
 
-function earn(amount, t){
-  balance += amount;
-  localStorage.setItem("balance", balance);
-  document.getElementById("balance").innerText = balance;
-
-  if(t==2){
-    document.getElementById("t3").classList.remove("locked");
-    document.getElementById("t3").innerHTML = `
-      <p>Task 3 → Earn $30</p>
-      <button onclick="earn(30,3)">Complete</button>
-    `;
-  }
-
-  alert("+$" + amount);
-}
-
-function locked(){
-  alert("Complete previous task first");
+function minus(){
+  let email = localStorage.getItem("current");
+  let data = JSON.parse(localStorage.getItem(email));
+  data.balance -= 100;
+  localStorage.setItem(email, JSON.stringify(data));
+  show();
 }
 
 function logout(){
+  localStorage.removeItem("current");
   location.reload();
 }
+
 </script>
 
 </body>
