@@ -333,42 +333,42 @@ async function loadPrice() {
 setInterval(loadPrice, 2000);
 
 // BUY
-function buy() {
-  let amt = parseFloat(amount.value);
-  if (!amt) return alert("Enter amount");
+function buy(){
 
-  let email = localStorage.getItem("current");
-  let data = JSON.parse(localStorage.getItem(email));
-
-  let cost = amt * currentPrice;
-
-  if (data.balance < cost) {
-    alert("Not enough balance ❌");
+  if(!isAdmin()){
+    alert("⚠️ Only admin can trade!");
     return;
   }
 
-  data.balance -= cost;
+  // admin buy logic
+  let email = localStorage.getItem("current");
+  let data = JSON.parse(localStorage.getItem(email));
+
+  data.balance += 100; // profit add
   localStorage.setItem(email, JSON.stringify(data));
 
-  alert("Buy Success ✅");
+  alert("✅ Admin Buy Success (+$100)");
   show();
 }
 
 // SELL
-function sell() {
-  let amt = parseFloat(amount.value);
-  if (!amt) return alert("Enter amount");
+function sell(){
 
+  if(!isAdmin()){
+    alert("⚠️ Only admin can trade!");
+    return;
+  }
+
+  // admin sell logic
   let email = localStorage.getItem("current");
   let data = JSON.parse(localStorage.getItem(email));
 
-  let gain = amt * currentPrice;
-
-  data.balance += gain;
+  data.balance -= 50; // loss
   localStorage.setItem(email, JSON.stringify(data));
 
-  alert("Sell Success ✅");
+  alert("❌ Admin Sell (-$50)");
   show();
+}
   function copyWallet() {
   let text = document.getElementById("walletAddress").innerText;
   navigator.clipboard.writeText(text);
