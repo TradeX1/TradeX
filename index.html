@@ -258,12 +258,29 @@ function add(){
 }
 
 // DECREASE BALANCE
-function minus(){
-  let email = localStorage.getItem("current");
-  let data = JSON.parse(localStorage.getItem(email));
 
-  data.balance -= 100;
-  localStorage.setItem(email, JSON.stringify(data));
+  async function updateUserBalance() {
+
+  let email = document.getElementById("targetEmail").value;
+  let amount = parseInt(document.getElementById("newBalance").value);
+
+  let snap = await getDocs(collection(db, "users"));
+
+  snap.forEach(async (docSnap) => {
+    let data = docSnap.data();
+
+    if (data.email === email) {
+
+      let newBal = (data.Balance || 0) + amount;
+
+      await updateDoc(doc(db, "users", docSnap.id), {
+        Balance: newBal
+      });
+
+      alert("✅ Balance Updated");
+    }
+  });
+
 
   show();
 }
@@ -493,7 +510,7 @@ function sell(){
 
 // 🔥 Firebase import (agar pehle se nahi lagaya to yeh bhi add hoga)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 // ⚠️ apna firebase config yahan paste karo
 const firebaseConfig = {
 apiKey: "AIzaSyCbMvOjA4m1QtnuRt7m7jXAddQq-W-Sh-k",
