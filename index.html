@@ -220,8 +220,8 @@ function loadUsers(){
         <b>${data.user}</b> (${data.email}) <br>
         Balance: $${data.balance} <br><br>
 
-        <button onclick="updateBal('${data.email}', 100)">+100</button>
-        <button onclick="updateBal('${data.email}', -100)">-100</button>
+        <button onclick="updateBal('${key}', 100)">+100</button>
+<button onclick="updateBal('${key}', -100)">-100</button>
       </div>
     `;
   }
