@@ -95,11 +95,13 @@ button{
       <input id="su_user" placeholder="Username">
       <input id="su_pass" type="password" placeholder="Password">
       <button onclick="signup()">Sign Up</button>
+    </div>
     <div class="card">
   <h3>Login</h3>
   <input id="li_email" placeholder="Email">
   <input id="li_pass" type="password" placeholder="Password">
   <button onclick="login()">Login</button>
+    </div>
 </div>
 </div>
 </div>
@@ -168,15 +170,10 @@ let adminEmail = "admin@gmail.com";
 let adminPass = "123456";
 
 // SIGNUP
-function signup(){
-  let email = su_email.value;
-  let user = su_user.value;
-  let pass = su_pass.value;
-
-  if(!email || !user || !pass){
-    alert("Fill all fields");
-    return;
-  }
+function signup() {
+  let email = document.getElementById("su_email").value;
+  let user = document.getElementById("su_user").value;
+  let pass = document.getElementById("su_pass").value;
 
   let data = {
     email: email,
@@ -186,26 +183,25 @@ function signup(){
   };
 
   localStorage.setItem(email, JSON.stringify(data));
-
   alert("Signup Success ✅");
 }
-}
+
 
 // LOGIN
-function login(){
-  let email = li_email.value;
-  let pass = li_pass.value;
+function login() {
+  let email = document.getElementById("li_email").value;
+  let pass = document.getElementById("li_pass").value;
 
   let data = localStorage.getItem(email);
 
-  if(!data){
+  if (!data) {
     alert("User not found ❌");
     return;
   }
 
   data = JSON.parse(data);
 
-  if(data.pass === pass){
+  if (data.pass === pass) {
     localStorage.setItem("current", email);
     show();
   } else {
