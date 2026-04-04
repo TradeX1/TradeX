@@ -226,7 +226,9 @@ function loadUsers(){
     `;
   }
 
-  usersList.innerHTML = html;}function updateBal(email, amount){
+  usersList.innerHTML = html;
+}
+  function updateBal(email, amount){
   let data = JSON.parse(localStorage.getItem(email));
 
   data.balance += amount;
@@ -234,7 +236,7 @@ function loadUsers(){
   localStorage.setItem(email, JSON.stringify(data));
 
   loadUsers();
-}
+
                        }
 // AUTO LOGIN
 if(localStorage.getItem("current")){
