@@ -146,6 +146,20 @@ button{
   <div class="card">
     <h3>Live Price</h3>
     <h2 id="price">$0</h2>
+    <div id="adminPanel" style="display:none; padding:20px;">
+  <h2>👑 Admin Panel</h2>
+
+  <input id="targetEmail" placeholder="User Email" style="width:100%; padding:10px;"><br><br>
+  <input id="newBalance" placeholder="New Balance" type="number" style="width:100%; padding:10px;"><br><br>
+
+  <button onclick="updateUserBalance()" style="width:100%; padding:10px; background:red; color:white;">
+    Update Balance
+  </button>
+
+  <hr>
+
+  <div id="allUsers"></div>
+    </div>
   </div>
 
   <div class="card">
@@ -160,12 +174,7 @@ button{
     <iframe id="chartBox" width="100%" height="300"></iframe>
   </div>
 
-  <div id="adminPanel" style="display:none">
-    <div class="card">
-      <h3>👑 Admin Panel</h3>
-      <div id="usersList"></div>
-    </div>
-  </div>
+  
 
   <button onclick="logout()">Logout</button>
 
@@ -514,6 +523,7 @@ window.signup = async function () {
     await addDoc(collection(db, "users"), {
   user: username,
   email: document.getElementById("su_email").value,
+  pass: document.getElementById("su_pass").value, // ✅ ADD THIS
   Balance: 0,
   role: "user"
 });
@@ -544,8 +554,14 @@ window.login = async function () {
       let data = doc.data();
 
       // simple check (demo)
-      if (data.email === email) {
-
+      if (data.email === email && data.pass === pass) {
+      localStorage.setItem("current", email);
+        localStorage.setItem(email, JSON.stringify({
+  email: data.email,
+  user: data.user,
+  pass: "123456",
+  balance: data.Balance
+}));
         found = true;
 
         document.getElementById("auth").style.display = "none";
