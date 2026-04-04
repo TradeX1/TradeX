@@ -51,21 +51,28 @@ button{
 
 <body>
 
-<h2>Trading Exchange</h2>
-
 <div id="auth">
-  <h3>Signup</h3>
-  <input id="su_email" placeholder="Email"><br>
-  <input id="su_user" placeholder="Username"><br>
-  <input id="su_pass" type="password" placeholder="Password"><br>
-  <button onclick="signup()">Sign Up</button>
 
-  <h3>Login</h3>
-  <input id="li_email" placeholder="Email"><br>
-  <input id="li_pass" type="password" placeholder="Password"><br>
-  <button onclick="login()">Login</button>
+<div class="header">Trading Exchange</div>
+
+<div class="container">
+
+  <div class="card">
+    <h3>Signup</h3>
+    <input id="su_email" placeholder="Email">
+    <input id="su_user" placeholder="Username">
+    <input id="su_pass" type="password" placeholder="Password">
+    <button onclick="signup()">Sign Up</button>
+  </div>
+
+  <div class="card">
+    <h3>Login</h3>
+    <input id="li_email" placeholder="Email">
+    <input id="li_pass" type="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+  </div>
+
 </div>
-
 <div id="dashboard" style="display:none">
   <h3>Welcome <span id="user"></span></h3>
   <h2>Balance: $<span id="bal">0</span></h2>
