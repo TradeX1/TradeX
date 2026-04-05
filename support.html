@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Support Chat</title>
+
+<style>
+body{
+  margin:0;
+  font-family: Arial;
+  background:#0d0d0d;
+  color:white;
+}
+
+.header{
+  background:#00c853;
+  padding:15px;
+  text-align:center;
+  font-size:18px;
+}
+
+.chat-box{
+  height:80vh;
+  overflow-y:auto;
+  padding:10px;
+}
+
+.msg{
+  background:#222;
+  padding:10px;
+  margin:5px;
+  border-radius:8px;
+  max-width:70%;
+}
+
+.user{
+  background:#00c853;
+  margin-left:auto;
+}
+
+.input-box{
+  display:flex;
+  padding:10px;
+  background:#111;
+}
+
+input{
+  flex:1;
+  padding:10px;
+  border:none;
+  outline:none;
+}
+
+button{
+  padding:10px;
+  background:#00c853;
+  color:white;
+  border:none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">💬 Live Support</div>
+
+<div class="chat-box" id="chat"></div>
+
+<div class="input-box">
+  <input id="msg" placeholder="Type message...">
+  <button onclick="send()">Send</button>
+</div>
+
+<script>
+function send(){
+  let msg = document.getElementById("msg").value;
+  if(!msg) return;
+
+  let chat = document.getElementById("chat");
+
+  chat.innerHTML += `<div class="msg user">${msg}</div>`;
+  document.getElementById("msg").value="";
+
+  setTimeout(()=>{
+    chat.innerHTML += `<div class="msg">Support: We will reply soon</div>`;
+  },1000);
+}
+</script>
+
+</body>
+</html>
