@@ -123,6 +123,10 @@ button{
     <h1 style="color:orange;">$<span id="bal">0</span></h1>
 
     <button onclick="openDeposit()">➕ Add Funds</button>
+    <button onclick="openSupport()" 
+style="width:100%; padding:12px; background:#00c853; color:white; border:none; margin-top:10px;">
+💬 Customer Support
+</button>
   </div>
 <div id="walletBox" style="display:none; background:#111; padding:15px; border-radius:10px; margin-top:10px;">
   <h3>Deposit USDT (TRC20)</h3>
@@ -610,6 +614,9 @@ function adminUpdate(){
   let amount = parseInt(document.getElementById("newBalance").value);
 
   updateBal(email, amount);
+}
+    function openSupport(){
+  window.location.href = "support.html";
 }
   </script>
   
