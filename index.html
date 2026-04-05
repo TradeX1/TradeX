@@ -151,20 +151,19 @@ style="width:100%; padding:12px; background:#00c853; color:white; border:none; m
     <h3>Live Price</h3>
     <h2 id="price">$0</h2>
     <div id="adminPanel" style="display:none; padding:20px;">
-  <h2>👑 Admin Panel</h2>
+<h2>👑 Admin Panel</h2>
 
-  <input id="targetEmail" placeholder="User Email" style="width:100%; padding:10px;"><br><br>
-  <input id="newBalance" placeholder="New Balance" type="number" style="width:100%; padding:10px;"><br><br>
+<input id="targetEmail" placeholder="User Email" style="width:100%; padding:10px;"><br><br>
 
-  <button onclick="updateUserBalance()" style="width:100%; padding:10px; background:red; color:white;">
-    Update Balance
-  </button>
+<input id="newBalance" placeholder="New Balance" type="number" style="width:100%; padding:10px;"><br><br>
 
-  <hr>
+<button onclick="updateUserBalance()" style="width:100%; padding:10px; background:red; color:white;">
+Update Balance
+</button>
 
-  <div id="allUsers"></div>
-    </div>
-  </div>
+<div id="userslist"></div>
+
+</div>
 
   <div class="card">
     <h3>Trade</h3>
@@ -192,10 +191,15 @@ let adminEmail = "admin@gmail.com";
 let adminPass = "123456";
 
 // SIGNUP
-function signup() {
+function signup(){
   let email = document.getElementById("su_email").value;
   let user = document.getElementById("su_user").value;
   let pass = document.getElementById("su_pass").value;
+
+  if(!email || !user || !pass){
+    alert("Fill all fields");
+    return;
+  }
 
   let data = {
     email: email,
@@ -205,30 +209,30 @@ function signup() {
   };
 
   localStorage.setItem(email, JSON.stringify(data));
-  alert("Signup Success ✅");
+
+  alert("Signup successful ✅");
 }
 
 
 // LOGIN
-function login() {
+function login(){
   let email = document.getElementById("li_email").value;
   let pass = document.getElementById("li_pass").value;
 
-  let data = localStorage.getItem(email);
+  let data = JSON.parse(localStorage.getItem(email));
 
-  if (!data) {
+  if(!data){
     alert("User not found ❌");
     return;
   }
 
-  data = JSON.parse(data);
-
-  if (data.pass === pass) {
-    localStorage.setItem("current", email);
-    show();
-  } else {
-    alert("Wrong Password ❌");
+  if(data.pass !== pass){
+    alert("Wrong password ❌");
+    return;
   }
+
+  localStorage.setItem("current", email);
+  show();
 }
   
 
@@ -263,26 +267,24 @@ function add(){
 
 // DECREASE BALANCE
 
-  async function updateUserBalance() {
-
+  function updateUserBalance() {
   let email = document.getElementById("targetEmail").value;
   let amount = parseInt(document.getElementById("newBalance").value);
 
-  let snap = await getDocs(collection(db, "users"));
+  let data = JSON.parse(localStorage.getItem(email));
 
-  snap.forEach(async (docSnap) => {
-    let data = docSnap.data();
+  if(!data){
+    alert("User not found ❌");
+    return;
+  }
 
-    if (data.email === email) {
+  data.balance = Number(amount);
 
-      let newBal = (data.Balance || 0) + amount;
+  localStorage.setItem(email, JSON.stringify(data));
 
-      await updateDoc(doc(db, "users", docSnap.id), {
-        Balance: newBal
-      });
-
-      alert("✅ Balance Updated");
-    }
+  alert("Balance Updated ✅");
+  loadUsers();
+}
   });
 
 
@@ -306,22 +308,22 @@ function loadUsers(){
   for(let i=0; i<localStorage.length; i++){
     let key = localStorage.key(i);
 
-    if(key == "current") continue;
+    if(key === "current") continue;
 
     let data = JSON.parse(localStorage.getItem(key));
 
     html += `
-      <div style="background:#222; padding:10px; margin:10px; border-radius:8px;">
+      <div style="background:#222; padding:10px; margin:10px;">
         <b>${data.user}</b> (${data.email}) <br>
         Balance: $${data.balance} <br><br>
 
         <button onclick="updateBal('${key}', 100)">+100</button>
-<button onclick="updateBal('${key}', -100)">-100</button>
+        <button onclick="updateBal('${key}', -100)">-100</button>
       </div>
     `;
   }
 
-  usersList.innerHTML = html;
+  document.getElementById("usersList").innerHTML = html;
 }
   function updateBal(email, amount){
   let data = JSON.parse(localStorage.getItem(email));
@@ -335,12 +337,10 @@ function loadUsers(){
 
   localStorage.setItem(email, JSON.stringify(data));
 
+  alert("Balance Updated ✅");
   loadUsers();
-
-  alert("✅ Balance Updated");
 }
-
-                       }
+  
 // AUTO LOGIN
 if(localStorage.getItem("current")){
   show();
