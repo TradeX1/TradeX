@@ -322,11 +322,19 @@ function loadUsers(){
   function updateBal(email, amount){
   let data = JSON.parse(localStorage.getItem(email));
 
-  data.balance += amount;
+  if(!data){
+    alert("User not found ❌");
+    return;
+  }
+
+  data.balance = Number(data.balance || 0) + Number(amount);
 
   localStorage.setItem(email, JSON.stringify(data));
 
   loadUsers();
+
+  alert("✅ Balance Updated");
+}
 
                        }
 // AUTO LOGIN
@@ -598,7 +606,12 @@ window.login = async function () {
     console.log(e);
   }
 };
+function adminUpdate(){
+  let email = document.getElementById("targetEmail").value;
+  let amount = parseInt(document.getElementById("newBalance").value);
 
+  updateBal(email, amount);
+}
   </script>
   
 </body>
