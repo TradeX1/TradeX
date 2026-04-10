@@ -2,635 +2,217 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trading Exchange</title>
+<title>TradeX Final</title>
 
 <style>
-body{
-  margin:0;
-  font-family:Arial;
-  background:#000;
-  color:white;
-  text-align:center;
-}
-
-/* HEADER */
-.header{
-  font-size:26px;
-  padding:15px;
-  font-weight:bold;
-  background:#111;
-  border-bottom:1px solid #222;
-}
-
-/* CONTAINER */
-.container{
-  max-width:400px;
-  margin:auto;
-}
-
-/* CARD BOX */
-.card{
-  background:#111;
-  padding:15px;
-  margin:15px;
-  border-radius:12px;
-  box-shadow:0 0 10px rgba(255,165,0,0.2);
-}
-
-/* INPUT */
-input{
-  width:100%;
-  padding:12px;
-  margin-top:10px;
-  border:none;
-  border-radius:6px;
-  background:#222;
-  color:white;
-}
-
-/* BUTTON */
-button{
-  width:100%;
-  padding:12px;
-  margin-top:10px;
-  border:none;
-  border-radius:6px;
-  background:orange;
-  color:white;
-  font-size:16px;
-}
-
-/* BALANCE */
-.balance{
-  font-size:28px;
-  color:orange;
-  margin:10px;
-}
-
-/* VIP BADGE */
-.vip{
-  background:gold;
-  color:black;
-  padding:5px 10px;
-  border-radius:20px;
-  font-size:12px;
-  display:inline-block;
-  margin-bottom:10px;
-}
-
+body{margin:0;font-family:Arial;background:#000;color:#fff}
+.header{background:#ff9800;padding:15px;text-align:center;font-weight:bold}
+.card{background:#111;padding:15px;margin:10px;border-radius:10px}
+input,button{width:100%;padding:10px;margin-top:10px;border:none;border-radius:5px}
+button{background:#ff9800;color:#fff}
 </style>
 </head>
 
 <body>
 
-<div class="header">💰 Trading Exchange</div>
+<div class="header">🔥 TradeX FINAL</div>
 
-<!-- AUTH -->
 <div id="auth">
-  <div class="container">
-
-    <div class="card">
-      <h3>Signup</h3>
-      <input id="su_email" placeholder="Email">
-      <input id="su_user" placeholder="Username">
-      <input id="su_pass" type="password" placeholder="Password">
-      <button onclick="signup()">Sign Up</button>
-    </div>
-    <div class="card">
-  <h3>Login</h3>
-  <input id="li_email" placeholder="Email">
-  <input id="li_pass" type="password" placeholder="Password">
-  <button onclick="login()">Login</button>
-    </div>
+<div class="card">
+<h3>Signup</h3>
+<input id="su_user" placeholder="Username">
+<input id="su_email" placeholder="Email">
+<input id="su_pass" placeholder="Password">
+<button onclick="signup()">Signup</button>
 </div>
+
+<div class="card">
+<h3>Login</h3>
+<input id="li_email" placeholder="Email">
+<input id="li_pass" placeholder="Password">
+<button onclick="login()">Login</button>
 </div>
 </div>
 
-<!-- DASHBOARD -->
 <div id="dashboard" style="display:none">
 
-<div class="header">📊 Trading Dashboard</div>
-
-<div class="container">
-<div class="header">📊 Trading Dashboard</div>
-  <div class="card">
-    <h3>Welcome <span id="user"></span></h3>
-    <p>Email: <span id="email"></span></p>
-  </div>
-
-  <div class="card">
-    <h3>Total Balance</h3>
-    <h1 style="color:orange;">$<span id="bal">0</span></h1>
-
-    <button onclick="openDeposit()">➕ Add Funds</button>
-    <button onclick="openSupport()" 
-style="width:100%; padding:12px; background:#00c853; color:white; border:none; margin-top:10px;">
-💬 Customer Support
-</button>
-  </div>
-<div id="walletBox" style="display:none; background:#111; padding:15px; border-radius:10px; margin-top:10px;">
-  <h3>Deposit USDT (TRC20)</h3>
-  
-  <p><b>Wallet Address:</b></p>
-  <p id="walletAddress">TQ6RJsuoy9xah3GbL4U3fuboTYhGkdY6CB</p>
-  <button onclick="copyWallet()">📋 Copy Address</button>
-  <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=TQ6RJsuoy9xah3GbL4U3fuboTYhGkdY6CB">
-  <br><br>
-  <button onclick="closeWallet()">Close</button>
-</div>
-  <div class="card">
-    <h3>Market</h3>
-    <button onclick="selectCoin('BTCUSDT')">BTC</button>
-    <button onclick="selectCoin('ETHUSDT')">ETH</button>
-    <button onclick="selectCoin('BNBUSDT')">BNB</button>
-    <button onclick="selectCoin('SOLUSDT')">SOL</button>
-    <button onclick="selectCoin('XRPUSDT')">XRP</button>
-  </div>
-
-  <div class="card">
-    <h3>Live Price</h3>
-    <h2 id="price">$0</h2>
-    <div id="adminPanel" style="display:none; padding:20px;">
-<h2>👑 Admin Panel</h2>
-
-<input id="targetEmail" placeholder="User Email" style="width:100%; padding:10px;"><br><br>
-
-<input id="newBalance" placeholder="New Balance" type="number" style="width:100%; padding:10px;"><br><br>
-
-<button onclick="updateUserBalance()" style="width:100%; padding:10px; background:red; color:white;">
-Update Balance
-</button>
-
-<div id="userslist"></div>
-
+<div class="card">
+<h3>Welcome <span id="user"></span></h3>
+<p id="email"></p>
+<h2>Balance: $<span id="bal">0</span></h2>
 </div>
 
-  <div class="card">
-    <h3>Trade</h3>
-    <input id="amount" placeholder="Enter Amount">
-    <button onclick="openDeposit()">Buy</button>
-    <button onclick="sell()">Sell</button>
-  </div>
+<div class="card">
+<h3>Trade</h3>
+<input id="amount" placeholder="Enter amount">
+<button onclick="buy()">Buy</button>
+<button onclick="sell()">Sell</button>
+</div>
 
-  <div class="card">
-    <h3>Live Chart</h3>
-    <iframe 
-  id="chartBox" 
-  width="100%" 
-  height="300"
-  src="https://www.tradingview.com/chart/"
-></iframe>
-  </div>
+<div class="card">
+<h3>💰 Add Funds</h3>
+<button onclick="openDeposit()">Add Funds</button>
 
-  
+<div id="depositBox" style="display:none;">
+<p>Send USDT (TRC20):</p>
+<p id="walletAddress">TQ6RJsuo9xah3GbL4U3fuboTYhGkdY6CB</p>
+<button onclick="copyWallet()">Copy</button>
 
-  <button onclick="logout()">Logout</button>
+<br><br>
 
+<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=TQ6RJsuo9xah3GbL4U3fuboTYhGkdY6CB">
+
+<br><br>
+<button onclick="closeDeposit()">Close</button>
 </div>
 </div>
 
-<script>
-
-// ADMIN LOGIN
-let adminEmail = "admin@gmail.com";
-let adminPass = "123456";
-
-// SIGNUP
-function signup(){
-  let email = document.getElementById("su_email").value;
-  let user = document.getElementById("su_user").value;
-  let pass = document.getElementById("su_pass").value;
-
-  if(!email || !user || !pass){
-    alert("Fill all fields");
-    return;
-  }
-
-  let data = {
-    email: email,
-    user: user,
-    pass: pass,
-    balance: 0
-  };
-
-  localStorage.setItem(email, JSON.stringify(data));
-
-  alert("Signup successful ✅");
-}
-
-
-// LOGIN
-function login(){
-  let email = document.getElementById("li_email").value;
-  let pass = document.getElementById("li_pass").value;
-
-  let data = JSON.parse(localStorage.getItem(email));
-
-  if(!data){
-    alert("User not found ❌");
-    return;
-  }
-
-  if(data.pass !== pass){
-    alert("Wrong password ❌");
-    return;
-  }
-
-  localStorage.setItem("current", email);
-  show();
-}
-  
-
-// SHOW DASHBOARD
-function show(){
-  let email = localStorage.getItem("current");
-  let data = JSON.parse(localStorage.getItem(email));
-  document.getElementById("email").innerText = email;
-  auth.style.display="none";
-  dashboard.style.display="block";
-
-  user.innerText = data.user;
-  bal.innerText = data.balance;
-  selectCoin("BTCUSDT");
-  // ADMIN CHECK
-  if(email == adminEmail){
-  adminPanel.style.display="block";
-  loadUsers();
-}
-}
-
-// INCREASE BALANCE
-function add(){
-  let email = localStorage.getItem("current");
-  let data = JSON.parse(localStorage.getItem(email));
-
-  data.balance += 100;
-  localStorage.setItem(email, JSON.stringify(data));
-
-  show();
-}
-
-// DECREASE BALANCE
-
-  function updateUserBalance() {
-  let email = document.getElementById("targetEmail").value;
-  let amount = parseInt(document.getElementById("newBalance").value);
-
-  let data = JSON.parse(localStorage.getItem(email));
-
-  if(!data){
-    alert("User not found ❌");
-    return;
-  }
-
-  data.balance = Number(amount);
-
-  localStorage.setItem(email, JSON.stringify(data));
-
-  alert("Balance Updated ✅");
-  loadUsers();
-}
-  });
-
-
-  show();
-}
-function openDeposit(){
-  document.getElementById("walletBox").style.display = "block";
-}
-
-function closeWallet(){
-  document.getElementById("walletBox").style.display = "none";
-}
-// LOGOUT
-function logout(){
-  localStorage.removeItem("current");
-  location.reload();
-}
-function loadUsers(){
-  let html = "";
-
-  for(let i=0; i<localStorage.length; i++){
-    let key = localStorage.key(i);
-
-    if(key === "current") continue;
-
-    let data = JSON.parse(localStorage.getItem(key));
-
-    html += `
-      <div style="background:#222; padding:10px; margin:10px;">
-        <b>${data.user}</b> (${data.email}) <br>
-        Balance: $${data.balance} <br><br>
-
-        <button onclick="updateBal('${key}', 100)">+100</button>
-        <button onclick="updateBal('${key}', -100)">-100</button>
-      </div>
-    `;
-  }
-
-  document.getElementById("usersList").innerHTML = html;
-}
-  function updateBal(email, amount){
-  let data = JSON.parse(localStorage.getItem(email));
-
-  if(!data){
-    alert("User not found ❌");
-    return;
-  }
-
-  data.balance = Number(data.balance || 0) + Number(amount);
-
-  localStorage.setItem(email, JSON.stringify(data));
-
-  alert("Balance Updated ✅");
-  loadUsers();
-}
-  
-// AUTO LOGIN
-if(localStorage.getItem("current")){
-  show();
-}
-let currentCoin = "BTCUSDT";
-let currentPrice = 0;
-
-// COIN SELECT
-function selectCoin(symbol) {
-  currentCoin = symbol;
-
-  document.getElementById("chartBox").src =
-    "https://s.tradingview.com/widgetembed/?symbol=BINANCE:" + symbol + "&interval=1";
-
-  loadPrice();
-}
-
-// LOAD LIVE PRICE
-async function loadPrice() {
-  let res = await fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${currentCoin}`);
-  let data = await res.json();
-
-  currentPrice = parseFloat(data.price);
-  price.innerText = currentPrice.toFixed(2);
-}
-
-// AUTO UPDATE PRICE
-setInterval(loadPrice, 2000);
-
-// BUY
-function buy(){
-
-  if(!isAdmin()){
-    alert("⚠️ Only admin can trade!");
-    return;
-  }
-
-  // admin buy logic
-  let email = localStorage.getItem("current");
-
-if(!email){
-  alert("Login first ❗");
-  return;
-}
-  let raw = localStorage.getItem(email);
-
-if(!raw){
-  alert("User data missing ❌");
-  return;
-}
-
-let data;
-
-try {
-  data = JSON.parse(raw);
-} catch(e){
-  alert("Data error ❌");
-  return;
-}
-
-  data.balance += 100; // profit add
-  localStorage.setItem(email, JSON.stringify(data));
-
-  alert("✅ Admin Buy Success (+$100)");
-  show();
-}
-
-// SELL
-function sell(){
-
-  if(!isAdmin()){
-    alert("⚠️ Only admin can trade!");
-    return;
-  }
-
-  let email = localStorage.getItem("current");
-
-  if(!email){
-    alert("Login first ❗");
-    return;
-  }
-
-  let raw = localStorage.getItem(email);
-
-  if(!raw){
-    alert("User data missing ❌");
-    return;
-  }
-
-  let data;
-
-  try {
-    data = JSON.parse(raw);
-  } catch(e){
-    alert("Data error ❌");
-    return;
-  }
-
-  data.balance -= 50;
-
-  localStorage.setItem(email, JSON.stringify(data));
-
-  alert("❌ Admin Sell (-$50)");
-  show();
-}
-  function copyWallet() {
-  let text = document.getElementById("walletAddress").innerText;
-  navigator.clipboard.writeText(text);
-  alert("Wallet Address Copied ✅");
-  }   
-  function isAdmin(){
-  let email = localStorage.getItem("current");
-  return email === adminEmail;
-  }
-  function sendToTelegram(text) {
-
-  let token = "8369866698:AAHijGkg3CsVGNKjrnlz9gS_4xRrpn5kJUM";
-  let chat_id = "2025370144";
-
-  let url = "https://api.telegram.org/bot" + token + "/sendMessage";
-
-  fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      chat_id: chat_id,
-      text: text
-    })
-  })
-  .then(res => res.json())
-  .then(data => {
-    if (data.ok) {
-      alert("✅ Message sent successfully");
-    } else {
-      alert("❌ Telegram error");
-      console.log(data);
-    }
-  })
-  .catch(error => {
-    alert("❌ Network error");
-    console.log(error);
-  });
-}
-  function sendMsg(){
-  let msg = document.getElementById("userMsg").value;
-
-  if(!msg){
-    alert("Type message");
-    return;
-  }
-
-  sendToTelegram("User: " + msg);
-    document.getElementById("userMsg").value = "";
-
-  alert("Message sent to support ✅");
-  }
-</script>
-<div style="padding:20px;">
-  <h3>Customer Support</h3>
-
-  <input 
-    type="text" 
-    id="userMsg" 
-    placeholder="Type your message"
-    style="width:100%; padding:10px; margin-bottom:10px;"
-  >
-
-  <button 
-    onclick="sendMsg()" 
-    style="width:100%; padding:10px; background:#00c853; color:white; border:none;"
-  >
-    Send Message
-  </button>
+<div class="card">
+<h3>Market</h3>
+<button onclick="setCoin('BTCUSDT')">BTC</button>
+<button onclick="setCoin('ETHUSDT')">ETH</button>
+<button onclick="setCoin('BNBUSDT')">BNB</button>
+
+<iframe id="chart" width="100%" height="300"></iframe>
 </div>
-  <script type="module">
 
-// 🔥 Firebase import (agar pehle se nahi lagaya to yeh bhi add hoga)
+<button onclick="openSupport()">Customer Support 💬</button>
+
+<div id="adminPanel" style="display:none">
+<h3>Admin</h3>
+<div id="adminMessages"></div>
+</div>
+
+<button onclick="logout()">Logout</button>
+
+</div>
+
+<!-- CHAT -->
+<div id="supportBox" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#000;">
+<div style="background:#222;padding:10px;">
+Support Chat
+<button onclick="closeSupport()">X</button>
+</div>
+
+<div id="chatArea" style="height:70%;overflow:auto;"></div>
+
+<input id="supportMsg">
+<button onclick="sendSupport()">Send</button>
+</div>
+
+<script type="module">
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-// ⚠️ apna firebase config yahan paste karo
+import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
 const firebaseConfig = {
-apiKey: "AIzaSyCbMvOjA4m1QtnuRt7m7jXAddQq-W-Sh-k",
-authDomain: "tradex-support.firebaseapp.com",
-projectId: "tradex-support",
-storageBucket: "tradex-support.firebasestorage.app",
-messagingSenderId: "822784979542",
-appId: "1:822784979542:web:4b53d1c77c922eeb6781f7",
-measurementId: "G-BM15B3C3HE"
+  apiKey: "AIzaSyCbMvOjA4m1QtnuRt7m7jXAddQq-W-Sh-k",
+  authDomain: "tradex-support.firebaseapp.com",
+  projectId: "tradex-support"
 };
 
-// init
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// 🔥 SIGNUP FUNCTION
-window.signup = async function () {
+let currentChatUser = "";
 
-  let username = document.getElementById("su_user").value;
+// SIGNUP
+window.signup = async function(){
+  await addDoc(collection(db,"users"),{
+    user: su_user.value,
+    email: su_email.value,
+    pass: su_pass.value,
+    balance: 0
+  });
+  alert("Signup success ✅");
+}
 
-  if (username === "") {
-    alert("Enter username");
-    return;
-  }
+// LOGIN
+window.login = async function(){
+  let snap = await getDocs(collection(db,"users"));
 
-  try {
-    await addDoc(collection(db, "users"), {
-  user: username,
-  email: document.getElementById("su_email").value,
-  pass: document.getElementById("su_pass").value, // ✅ ADD THIS
-  Balance: 0,
-  role: "user"
-});
+  snap.forEach(docSnap=>{
+    let d = docSnap.data();
 
-    alert("Signup successful ✅");
+    if(d.email==li_email.value && d.pass==li_pass.value){
 
-  } catch (e) {
-    console.log(e);
-  }
-};
-    // 🔐 LOGIN FUNCTION
-window.login = async function () {
+      localStorage.setItem("user",JSON.stringify(d));
 
-  let email = document.getElementById("li_email").value;
-  let pass = document.getElementById("li_pass").value;
+      user.innerText=d.user;
+      email.innerText=d.email;
+      bal.innerText=d.balance;
 
-  if (email === "" || pass === "") {
-    alert("Enter email & password");
-    return;
-  }
+      auth.style.display="none";
+      dashboard.style.display="block";
 
-  try {
-    let snap = await getDocs(collection(db, "users"));
-
-    let found = false;
-
-    snap.forEach((doc) => {
-      let data = doc.data();
-
-      // simple check (demo)
-      if (data.email === email && data.pass === pass) {
-      localStorage.setItem("current", email);
-        localStorage.setItem(email, JSON.stringify({
-  email: data.email,
-  user: data.user,
-  pass: "123456",
-  balance: data.Balance
-}));
-        found = true;
-
-        document.getElementById("auth").style.display = "none";
-        document.getElementById("dashboard").style.display = "block";
-
-        document.getElementById("user").innerText = data.user;
-        document.getElementById("bal").innerText = data.Balance;
-
+      if(d.email=="admin@tradex.com"){
+        adminPanel.style.display="block";
+        loadAdmin();
       }
-    });
-
-    if (!found) {
-      alert("User not found ❌");
     }
-
-  } catch (e) {
-    console.log(e);
-  }
-};
-function adminUpdate(){
-  let email = document.getElementById("targetEmail").value;
-  let amount = parseInt(document.getElementById("newBalance").value);
-
-  updateBal(email, amount);
-}
-    window.openSupport = function(){
-  window.location.href = "support.html";
-}
-    function openDeposit(){
-  alert("Buy clicked");
+  });
 }
 
-function sell(){
-  alert("Sell clicked");
+// BUY / SELL
+window.buy = ()=> alert("⚠️ Please add funds first");
+window.sell = ()=> alert("✅ Withdraw request sent");
+
+// DEPOSIT
+window.openDeposit=()=>depositBox.style.display="block";
+window.closeDeposit=()=>depositBox.style.display="none";
+window.copyWallet=()=>{
+  navigator.clipboard.writeText(walletAddress.innerText);
+  alert("Copied ✅");
 }
-  </script>
-  
+
+// CHART
+window.setCoin = c => chart.src="https://s.tradingview.com/widgetembed/?symbol=BINANCE:"+c;
+
+// CHAT USER
+window.openSupport=()=>{supportBox.style.display="block";loadChat();}
+window.closeSupport=()=>supportBox.style.display="none";
+
+async function loadChat(){
+  let u=JSON.parse(localStorage.getItem("user"));
+  let snap=await getDocs(collection(db,"support"));
+  let html="";
+  snap.forEach(doc=>{
+    let d=doc.data();
+    if(d.email==u.email) html+=`<p>${d.message}</p>`;
+  });
+  chatArea.innerHTML=html;
+}
+
+// SEND MESSAGE
+window.sendSupport=async function(){
+  let u=JSON.parse(localStorage.getItem("user"));
+  let msg=supportMsg.value;
+
+  await addDoc(collection(db,"support"),{
+    email:u.email,
+    message:msg,
+    sender:"user"
+  });
+
+  supportMsg.value="";
+  loadChat();
+}
+
+// ADMIN VIEW
+async function loadAdmin(){
+  let snap=await getDocs(collection(db,"support"));
+  let html="";
+  snap.forEach(doc=>{
+    let d=doc.data();
+    html+=`<p>${d.email}: ${d.message}</p>`;
+  });
+  adminMessages.innerHTML=html;
+}
+
+window.logout=()=>location.reload();
+window.onload=()=>setCoin("BTCUSDT");
+
+</script>
+
 </body>
 </html>
