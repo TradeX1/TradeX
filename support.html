@@ -2,89 +2,190 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Support Chat</title>
+<title>TradeX Final Pro</title>
 
 <style>
-body{
-  margin:0;
-  font-family: Arial;
-  background:#0d0d0d;
-  color:white;
-}
-
-.header{
-  background:#00c853;
-  padding:15px;
-  text-align:center;
-  font-size:18px;
-}
-
-.chat-box{
-  height:80vh;
-  overflow-y:auto;
-  padding:10px;
-}
-
-.msg{
-  background:#222;
-  padding:10px;
-  margin:5px;
-  border-radius:8px;
-  max-width:70%;
-}
-
-.user{
-  background:#00c853;
-  margin-left:auto;
-}
-
-.input-box{
-  display:flex;
-  padding:10px;
-  background:#111;
-}
-
-input{
-  flex:1;
-  padding:10px;
-  border:none;
-  outline:none;
-}
-
-button{
-  padding:10px;
-  background:#00c853;
-  color:white;
-  border:none;
-}
+body{margin:0;font-family:Arial;background:#0b0f19;color:#fff}
+.header{background:#ff9800;padding:15px;text-align:center;font-weight:bold}
+.card{background:#121826;padding:15px;margin:10px;border-radius:10px}
+input,button{width:100%;padding:10px;margin-top:10px;border:none;border-radius:5px}
+button{background:#ff9800;color:#fff}
 </style>
 </head>
 
 <body>
 
-<div class="header">💬 Live Support</div>
+<div class="header">🔥 TradeX FINAL PRO</div>
 
-<div class="chat-box" id="chat"></div>
-
-<div class="input-box">
-  <input id="msg" placeholder="Type message...">
-  <button onclick="send()">Send</button>
+<!-- AUTH -->
+<div id="auth">
+<div class="card">
+<h3>Signup</h3>
+<input id="su_email" placeholder="Email">
+<input id="su_pass" placeholder="Password">
+<button onclick="signup()">Signup</button>
 </div>
 
-<script>
-function send(){
-  let msg = document.getElementById("msg").value;
-  if(!msg) return;
+<div class="card">
+<h3>Login</h3>
+<input id="li_email" placeholder="Email">
+<input id="li_pass" placeholder="Password">
+<button onclick="login()">Login</button>
+</div>
+</div>
 
-  let chat = document.getElementById("chat");
+<!-- DASHBOARD -->
+<div id="dashboard" style="display:none">
+<div class="card">
+<h3 id="welcome"></h3>
+<h2>Balance: $<span id="bal">0</span></h2>
+</div>
 
-  chat.innerHTML += `<div class="msg user">${msg}</div>`;
-  document.getElementById("msg").value="";
+<div class="card">
+<input id="amount" placeholder="Amount">
+<button onclick="buy()">Buy</button>
+<button onclick="sell()">Sell</button>
+</div>
 
-  setTimeout(()=>{
-    chat.innerHTML += `<div class="msg">Support: We will reply soon</div>`;
-  },1000);
-}
+<div class="card">
+<button onclick="openDeposit()">Deposit</button>
+<button onclick="withdraw()">Withdraw</button>
+
+<div id="depositBox" style="display:none">
+<p>TRC20 Wallet:</p>
+<p id="wallet">TQ6RJsuo9xah3GbL4U3fuboTYhGkdY6CB</p>
+<button onclick="copyWallet()">Copy</button>
+<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=TQ6RJsuo9xah3GbL4U3fuboTYhGkdY6CB">
+</div>
+</div>
+
+<div class="card">
+<h3>Market</h3>
+<button onclick="setCoin('BTCUSDT')">BTC</button>
+<button onclick="setCoin('ETHUSDT')">ETH</button>
+<button onclick="setCoin('BNBUSDT')">BNB</button>
+<iframe id="chart" width="100%" height="300"></iframe>
+</div>
+
+<button onclick="logout()">Logout</button>
+</div>
+
+<script type="module">
+
+// 🔥 IMPORTS
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+// ⚠️ APNA FIREBASE CONFIG YAHA PASTE KARO
+const firebaseConfig = {
+  apiKey: "PASTE_API_KEY",
+  authDomain: "PASTE_AUTH_DOMAIN",
+  projectId: "PASTE_PROJECT_ID"
+};
+
+// INIT
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// SIGNUP
+window.signup = async ()=>{
+  if(!su_email.value || !su_pass.value){
+    alert("Fill fields ❌");
+    return;
+  }
+
+  try{
+    let res = await createUserWithEmailAndPassword(auth, su_email.value, su_pass.value);
+
+    await setDoc(doc(db,"users",res.user.uid),{
+      email: su_email.value,
+      balance: 0
+    });
+
+    alert("Signup Success ✅");
+  }catch(e){
+    alert(e.message);
+  }
+};
+
+// LOGIN
+window.login = async ()=>{
+  try{
+    await signInWithEmailAndPassword(auth, li_email.value, li_pass.value);
+  }catch(e){
+    alert("Login Failed ❌");
+  }
+};
+
+// AUTO LOGIN FIX
+onAuthStateChanged(auth, async (user)=>{
+  if(user){
+    let snap = await getDoc(doc(db,"users",user.uid));
+
+    if(snap.exists()){
+      let data = snap.data();
+
+      document.getElementById("auth").style.display="none";
+      dashboard.style.display="block";
+
+      welcome.innerText = data.email;
+      bal.innerText = data.balance;
+    }
+  }
+});
+
+// BUY
+window.buy = async ()=>{
+  let user = auth.currentUser;
+  let ref = doc(db,"users",user.uid);
+  let snap = await getDoc(ref);
+
+  await updateDoc(ref,{
+    balance: snap.data().balance + Number(amount.value)
+  });
+
+  alert("Buy success ✅");
+};
+
+// SELL
+window.sell = async ()=>{
+  let user = auth.currentUser;
+  let ref = doc(db,"users",user.uid);
+  let snap = await getDoc(ref);
+
+  await updateDoc(ref,{
+    balance: snap.data().balance - Number(amount.value)
+  });
+
+  alert("Sell success ✅");
+};
+
+// DEPOSIT UI
+window.openDeposit = ()=>depositBox.style.display="block";
+
+window.copyWallet = ()=>{
+  navigator.clipboard.writeText(wallet.innerText);
+  alert("Copied ✅");
+};
+
+// WITHDRAW
+window.withdraw = ()=>{
+  alert("Withdraw request sent ⏳");
+};
+
+// MARKET
+window.setCoin = (c)=>{
+  chart.src = "https://s.tradingview.com/widgetembed/?symbol=BINANCE:"+c;
+};
+
+// LOGOUT
+window.logout = ()=>signOut(auth);
+
+// LOAD DEFAULT
+window.onload = ()=>setCoin("BTCUSDT");
+
 </script>
 
 </body>
