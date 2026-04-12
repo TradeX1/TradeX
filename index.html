@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TradeX Final</title>
+<title>TradeX Ultimate SaaS</title>
 
 <style>
 body{margin:0;font-family:Arial;background:#000;color:#fff}
@@ -15,21 +15,18 @@ button{background:#ff9800;color:#fff}
 
 <body>
 
-<div class="header">🔥 TradeX FINAL</div>
+<div class="header">🔥 TradeX Ultimate SaaS</div>
 
 <div id="auth">
 <div class="card">
 <h3>Signup</h3>
-<input id="su_user" placeholder="Username">
-<input id="su_email" placeholder="Email">
-<input id="su_pass" placeholder="Password">
+<input id="su_email"><input id="su_pass">
 <button onclick="signup()">Signup</button>
 </div>
 
 <div class="card">
 <h3>Login</h3>
-<input id="li_email" placeholder="Email">
-<input id="li_pass" placeholder="Password">
+<input id="li_email"><input id="li_pass">
 <button onclick="login()">Login</button>
 </div>
 </div>
@@ -37,180 +34,243 @@ button{background:#ff9800;color:#fff}
 <div id="dashboard" style="display:none">
 
 <div class="card">
-<h3>Welcome <span id="user"></span></h3>
-<p id="email"></p>
+<p id="userEmail"></p>
 <h2>Balance: $<span id="bal">0</span></h2>
 </div>
 
 <div class="card">
-<h3>Trade</h3>
-<input id="amount" placeholder="Enter amount">
+<input id="amount" placeholder="Amount">
 <button onclick="buy()">Buy</button>
 <button onclick="sell()">Sell</button>
 </div>
 
 <div class="card">
-<h3>💰 Add Funds</h3>
-<button onclick="openDeposit()">Add Funds</button>
-
-<div id="depositBox" style="display:none;">
-<p>Send USDT (TRC20):</p>
-<p id="walletAddress">TQ6RJsuo9xah3GbL4U3fuboTYhGkdY6CB</p>
-<button onclick="copyWallet()">Copy</button>
-
-<br><br>
-
-<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=TQ6RJsuo9xah3GbL4U3fuboTYhGkdY6CB">
-
-<br><br>
-<button onclick="closeDeposit()">Close</button>
-</div>
+<button onclick="deposit()">Deposit</button>
+<button onclick="withdraw()">Withdraw</button>
 </div>
 
 <div class="card">
-<h3>Market</h3>
-<button onclick="setCoin('BTCUSDT')">BTC</button>
-<button onclick="setCoin('ETHUSDT')">ETH</button>
-<button onclick="setCoin('BNBUSDT')">BNB</button>
-
-<iframe id="chart" width="100%" height="300"></iframe>
+<h3>Orders</h3>
+<div id="ordersBox"></div>
 </div>
 
-<button onclick="openSupport()">Customer Support 💬</button>
+<div class="card">
+<h3>Chat</h3>
+<input id="msg"><button onclick="sendMsg()">Send</button>
+</div>
 
 <div id="adminPanel" style="display:none">
-<h3>Admin</h3>
-<div id="adminMessages"></div>
+<div class="card">
+<h3>👑 Admin Panel</h3>
+
+<div id="usersList"></div>
+
+<h4>Deposits</h4>
+<div id="deposits"></div>
+
+<h4>Withdraws</h4>
+<div id="withdraws"></div>
+
+</div>
 </div>
 
 <button onclick="logout()">Logout</button>
 
 </div>
 
-<!-- CHAT -->
-<div id="supportBox" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#000;">
-<div style="background:#222;padding:10px;">
-Support Chat
-<button onclick="closeSupport()">X</button>
-</div>
-
-<div id="chatArea" style="height:70%;overflow:auto;"></div>
-
-<input id="supportMsg">
-<button onclick="sendSupport()">Send</button>
-</div>
-
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, addDoc, collection, getDocs, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-const firebaseConfig = {
+const app = initializeApp({
   apiKey: "AIzaSyCbMvOjA4m1QtnuRt7m7jXAddQq-W-Sh-k",
   authDomain: "tradex-support.firebaseapp.com",
   projectId: "tradex-support"
-};
+});
 
-const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
-let currentChatUser = "";
+const auth = getAuth(app);
 
 // SIGNUP
-window.signup = async function(){
-  await addDoc(collection(db,"users"),{
-    user: su_user.value,
-    email: su_email.value,
-    pass: su_pass.value,
-    balance: 0
-  });
-  alert("Signup success ✅");
+window.signup = async ()=>{
+let res = await createUserWithEmailAndPassword(auth,su_email.value,su_pass.value);
+await setDoc(doc(db,"users",res.user.uid),{
+email:res.user.email,
+balance:1000
+});
+alert("Signup Done");
 }
 
 // LOGIN
-window.login = async function(){
-  let snap = await getDocs(collection(db,"users"));
+window.login = ()=>signInWithEmailAndPassword(auth,li_email.value,li_pass.value);
 
-  snap.forEach(docSnap=>{
-    let d = docSnap.data();
+// LOAD USER
+onAuthStateChanged(auth,(user)=>{
+if(user){
 
-    if(d.email==li_email.value && d.pass==li_pass.value){
+auth.style.display="none";
+dashboard.style.display="block";
+userEmail.innerText=user.email;
 
-      localStorage.setItem("user",JSON.stringify(d));
+// REAL-TIME BALANCE
+onSnapshot(doc(db,"users",user.uid),(snap)=>{
+bal.innerText=snap.data().balance;
+});
 
-      user.innerText=d.user;
-      email.innerText=d.email;
-      bal.innerText=d.balance;
+loadOrders();
 
-      auth.style.display="none";
-      dashboard.style.display="block";
-
-      if(d.email=="admin@tradex.com"){
-        adminPanel.style.display="block";
-        loadAdmin();
-      }
-    }
-  });
+if(user.email=="admin@tradex.com"){
+adminPanel.style.display="block";
+loadUsers();
+loadDeposits();
+loadWithdraws();
 }
 
-// BUY / SELL
-window.buy = ()=> alert("⚠️ Please add funds first");
-window.sell = ()=> alert("✅ Withdraw request sent");
+}
+});
+
+// BUY
+window.buy=async ()=>{
+let u=auth.currentUser;
+await addDoc(collection(db,"orders"),{
+uid:u.uid,type:"buy",amount:Number(amount.value)
+});
+}
+
+// SELL
+window.sell=async ()=>{
+let u=auth.currentUser;
+await addDoc(collection(db,"orders"),{
+uid:u.uid,type:"sell",amount:Number(amount.value)
+});
+}
 
 // DEPOSIT
-window.openDeposit=()=>depositBox.style.display="block";
-window.closeDeposit=()=>depositBox.style.display="none";
-window.copyWallet=()=>{
-  navigator.clipboard.writeText(walletAddress.innerText);
-  alert("Copied ✅");
+window.deposit=async ()=>{
+let u=auth.currentUser;
+let amt=Number(prompt("Deposit amount"));
+
+if(!amt)return;
+
+await addDoc(collection(db,"transactions"),{
+uid:u.uid,type:"deposit",amount:amt,status:"pending"
+});
+alert("Deposit request sent");
 }
 
-// CHART
-window.setCoin = c => chart.src="https://s.tradingview.com/widgetembed/?symbol=BINANCE:"+c;
+// WITHDRAW
+window.withdraw=async ()=>{
+let u=auth.currentUser;
+let amt=Number(prompt("Withdraw amount"));
 
-// CHAT USER
-window.openSupport=()=>{supportBox.style.display="block";loadChat();}
-window.closeSupport=()=>supportBox.style.display="none";
-
-async function loadChat(){
-  let u=JSON.parse(localStorage.getItem("user"));
-  let snap=await getDocs(collection(db,"support"));
-  let html="";
-  snap.forEach(doc=>{
-    let d=doc.data();
-    if(d.email==u.email) html+=`<p>${d.message}</p>`;
-  });
-  chatArea.innerHTML=html;
+let snap=await getDoc(doc(db,"users",u.uid));
+if(amt>snap.data().balance){
+alert("Low balance");
+return;
 }
 
-// SEND MESSAGE
-window.sendSupport=async function(){
-  let u=JSON.parse(localStorage.getItem("user"));
-  let msg=supportMsg.value;
-
-  await addDoc(collection(db,"support"),{
-    email:u.email,
-    message:msg,
-    sender:"user"
-  });
-
-  supportMsg.value="";
-  loadChat();
+await addDoc(collection(db,"transactions"),{
+uid:u.uid,type:"withdraw",amount:amt,status:"pending"
+});
+alert("Withdraw request sent");
 }
 
-// ADMIN VIEW
-async function loadAdmin(){
-  let snap=await getDocs(collection(db,"support"));
-  let html="";
-  snap.forEach(doc=>{
-    let d=doc.data();
-    html+=`<p>${d.email}: ${d.message}</p>`;
-  });
-  adminMessages.innerHTML=html;
+// LOAD ORDERS
+async function loadOrders(){
+let u=auth.currentUser;
+let snap=await getDocs(collection(db,"orders"));
+let html="";
+snap.forEach(doc=>{
+let d=doc.data();
+if(d.uid==u.uid){
+html+=`<p>${d.type} - ${d.amount}</p>`;
+}
+});
+ordersBox.innerHTML=html;
 }
 
-window.logout=()=>location.reload();
-window.onload=()=>setCoin("BTCUSDT");
+// ADMIN USERS
+async function loadUsers(){
+let snap=await getDocs(collection(db,"users"));
+let html="";
+snap.forEach(doc=>{
+html+=`<p>${doc.data().email}</p>`;
+});
+usersList.innerHTML=html;
+}
+
+// LOAD DEPOSITS
+async function loadDeposits(){
+let snap=await getDocs(collection(db,"transactions"));
+let html="";
+snap.forEach(docSnap=>{
+let d=docSnap.data();
+if(d.type=="deposit" && d.status=="pending"){
+html+=`<p>${d.uid} $${d.amount}
+<button onclick="approveDeposit('${docSnap.id}','${d.uid}',${d.amount})">Approve</button></p>`;
+}
+});
+deposits.innerHTML=html;
+}
+
+// APPROVE DEPOSIT
+window.approveDeposit=async(id,uid,amt)=>{
+let ref=doc(db,"users",uid);
+let snap=await getDoc(ref);
+
+await updateDoc(ref,{
+balance:snap.data().balance+amt
+});
+
+await updateDoc(doc(db,"transactions",id),{status:"done"});
+
+alert("Approved");
+loadDeposits();
+}
+
+// LOAD WITHDRAW
+async function loadWithdraws(){
+let snap=await getDocs(collection(db,"transactions"));
+let html="";
+snap.forEach(docSnap=>{
+let d=docSnap.data();
+if(d.type=="withdraw" && d.status=="pending"){
+html+=`<p>${d.uid} $${d.amount}
+<button onclick="approveWithdraw('${docSnap.id}','${d.uid}',${d.amount})">Approve</button></p>`;
+}
+});
+withdraws.innerHTML=html;
+}
+
+// APPROVE WITHDRAW
+window.approveWithdraw=async(id,uid,amt)=>{
+let ref=doc(db,"users",uid);
+let snap=await getDoc(ref);
+
+await updateDoc(ref,{
+balance:snap.data().balance-amt
+});
+
+await updateDoc(doc(db,"transactions",id),{status:"done"});
+
+alert("Withdraw Approved");
+loadWithdraws();
+}
+
+// CHAT
+window.sendMsg=async ()=>{
+let u=auth.currentUser;
+await addDoc(collection(db,"chat"),{
+uid:u.uid,
+msg:msg.value
+});
+msg.value="";
+}
+
+// LOGOUT
+window.logout=()=>signOut(auth);
 
 </script>
 
