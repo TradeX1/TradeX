@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TradeX Ultimate SaaS</title>
+<title>TradeX Ultimate</title>
 
 <style>
 body{margin:0;font-family:Arial;background:#000;color:#fff}
@@ -15,22 +15,26 @@ button{background:#ff9800;color:#fff}
 
 <body>
 
-<div class="header">🔥 TradeX Ultimate SaaS</div>
+<div class="header">🔥 TradeX Ultimate</div>
 
+<!-- AUTH -->
 <div id="auth">
 <div class="card">
 <h3>Signup</h3>
-<input id="su_email"><input id="su_pass">
+<input id="su_email" placeholder="Email">
+<input id="su_pass" placeholder="Password">
 <button onclick="signup()">Signup</button>
 </div>
 
 <div class="card">
 <h3>Login</h3>
-<input id="li_email"><input id="li_pass">
+<input id="li_email" placeholder="Email">
+<input id="li_pass" placeholder="Password">
 <button onclick="login()">Login</button>
 </div>
 </div>
 
+<!-- DASHBOARD -->
 <div id="dashboard" style="display:none">
 
 <div class="card">
@@ -56,13 +60,15 @@ button{background:#ff9800;color:#fff}
 
 <div class="card">
 <h3>Chat</h3>
-<input id="msg"><button onclick="sendMsg()">Send</button>
+<input id="msg">
+<button onclick="sendMsg()">Send</button>
 </div>
 
 <div id="adminPanel" style="display:none">
 <div class="card">
 <h3>👑 Admin Panel</h3>
 
+<h4>Users</h4>
 <div id="usersList"></div>
 
 <h4>Deposits</h4>
@@ -95,23 +101,52 @@ const auth = getAuth(app);
 
 // SIGNUP
 window.signup = async ()=>{
-let res = await createUserWithEmailAndPassword(auth,su_email.value,su_pass.value);
+let email = su_email.value;
+let pass = su_pass.value;
+
+if(!email || !pass){
+alert("Enter details ❌");
+return;
+}
+
+try{
+let res = await createUserWithEmailAndPassword(auth,email,pass);
+
 await setDoc(doc(db,"users",res.user.uid),{
-email:res.user.email,
-balance:1000
+email: email,
+balance: 1000
 });
-alert("Signup Done");
+
+alert("Signup success ✅");
+}catch(e){
+alert(e.message);
+}
 }
 
 // LOGIN
-window.login = ()=>signInWithEmailAndPassword(auth,li_email.value,li_pass.value);
+window.login = async ()=>{
+let email = li_email.value;
+let pass = li_pass.value;
 
-// LOAD USER
+if(!email || !pass){
+alert("Enter login details ❌");
+return;
+}
+
+try{
+await signInWithEmailAndPassword(auth,email,pass);
+}catch(e){
+alert("Wrong login ❌");
+}
+}
+
+// AUTO LOGIN
 onAuthStateChanged(auth,(user)=>{
 if(user){
 
-auth.style.display="none";
+authBox.style.display="none";
 dashboard.style.display="block";
+
 userEmail.innerText=user.email;
 
 // REAL-TIME BALANCE
@@ -128,12 +163,22 @@ loadDeposits();
 loadWithdraws();
 }
 
+}else{
+authBox.style.display="block";
+dashboard.style.display="none";
 }
 });
 
 // BUY
 window.buy=async ()=>{
 let u=auth.currentUser;
+let ref=doc(db,"users",u.uid);
+let snap=await getDoc(ref);
+
+await updateDoc(ref,{
+balance:snap.data().balance+Number(amount.value)
+});
+
 await addDoc(collection(db,"orders"),{
 uid:u.uid,type:"buy",amount:Number(amount.value)
 });
@@ -142,6 +187,13 @@ uid:u.uid,type:"buy",amount:Number(amount.value)
 // SELL
 window.sell=async ()=>{
 let u=auth.currentUser;
+let ref=doc(db,"users",u.uid);
+let snap=await getDoc(ref);
+
+await updateDoc(ref,{
+balance:snap.data().balance-Number(amount.value)
+});
+
 await addDoc(collection(db,"orders"),{
 uid:u.uid,type:"sell",amount:Number(amount.value)
 });
@@ -166,8 +218,9 @@ let u=auth.currentUser;
 let amt=Number(prompt("Withdraw amount"));
 
 let snap=await getDoc(doc(db,"users",u.uid));
+
 if(amt>snap.data().balance){
-alert("Low balance");
+alert("Low balance ❌");
 return;
 }
 
@@ -226,7 +279,7 @@ balance:snap.data().balance+amt
 
 await updateDoc(doc(db,"transactions",id),{status:"done"});
 
-alert("Approved");
+alert("Deposit Approved");
 loadDeposits();
 }
 
