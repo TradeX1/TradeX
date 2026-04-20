@@ -1,29 +1,25 @@
 // ================= FIREBASE IMPORTS =================
+// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getFirestore, doc, getDoc, updateDoc, addDoc, collection, getDocs } from "firebase/firestore";
-import { getAuth, signOut } from "firebase/auth";
-import { getAnalytics, isSupported } from "firebase/analytics";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
-// ================= FIREBASE CONFIG =================
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyCbMvOjA4m1QtnuRt7m7jXAddQq-W-Sh-k",
   authDomain: "tradex-support.firebaseapp.com",
   projectId: "tradex-support",
-  storageBucket: "tradex-support.appspot.com",
+  storageBucket: "tradex-support.firebasestorage.app",
   messagingSenderId: "822784979542",
-  appId: "1:822784979542:web:4b53d1c77c922eeb6781f7",
-  measurementId: "G-BM15B3C3HE"
+  appId: "1:822784979542:web:c32ee91b7849fcb16781f7",
+  measurementId: "G-CJ4HWBLVCJ"
 };
 
-// ================= INIT FIREBASE =================
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
-
-// safe analytics
-let analytics = null;
-isSupported().then(ok => {
-  if (ok) analytics = getAnalytics(app);
+const analytics = getAnalytics(app);
 });
 
 // ================= HELPERS =================
