@@ -95,6 +95,7 @@ window.deposit = async () => {
     time: Date.now()
   });
 
+
   alert("Deposit request sent");
 };
 
